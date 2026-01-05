@@ -2,7 +2,7 @@ import React, { use, useState } from 'react';
 import ChessBoard from './components/Board/ChessBoard';
 import { Piece, Square, PieceColor } from './types/chess';
 import { INIT_POS } from './types/chess';
-import { getValidMoves } from './utils/gameLogic';
+import { getValidMoves, isKingInCheck, isSquareAttacked } from './utils/gameLogic';
 import logo from './logo.svg';
 import './App.css';
 
@@ -14,6 +14,7 @@ const App: React.FC = () => {
   
 
   const handlePieceSelect = (piece: Piece) => {
+
     if (piece.color !== turn) return;
 
     if (selectedPiece?.id === piece.id) {

@@ -1,14 +1,14 @@
-import { Piece, Square, PieceType, files, ranks, squareToCoords, coordsToSquare, PieceColor } from '../types/chess';
+import { Piece, Square, PieceType, files, ranks, squareToCoords, coordsToSquare, PieceColor, MAX_RAY_STEPS } from '../types/chess';
 
 export function getValidMoves(piece: Piece, pieces: Piece[]): Square[] {
-    const validMoves: Square[] = [];
+    let validMoves: Square[] = [];
     const { x: fromX, y: fromY } = squareToCoords(piece.position);
 
     if (piece.type === 'pawn') {
-        return getPawnMoves(piece, pieces);
+        validMoves = getPawnMoves(piece, pieces);
     }
 
-    const directions = getPieceDirections(piece.type, piece.color);
+    const directions = getPieceDirections(piece.type);
 
     for (const [dx, dy] of directions) {
         if (piece.type === 'knight') {
@@ -55,7 +55,114 @@ export function getValidMoves(piece: Piece, pieces: Piece[]): Square[] {
         }
     }
 
-    return validMoves;
+    const safeMoves: Square[] = [];
+
+    for (const move of validMoves) {
+        const newBoard = makeMove(pieces, piece, move);
+    
+        if (!isKingInCheck(piece.color, newBoard)) {
+            safeMoves.push(move);
+        }
+    }
+
+    return safeMoves;
+}
+
+function makeMove(pieces: Piece[], piece: Piece, move: Square): Piece[] {
+    return pieces
+            .filter(p => p.position !== move)
+            .map(p => p.id === piece.id 
+                ? {...p, position: move}
+                : {...p}
+             );
+}
+
+export function isSquareAttacked(square: Square, byColor: PieceColor, pieces: Piece[]): boolean {
+    const { x: squareX, y: squareY } = squareToCoords(square);
+
+    // Отдельная проверка на атаку пешкой
+    const pawnDirection = byColor === 'black' ? 1 : -1;
+    const targetY = squareY + pawnDirection;
+
+    for (const dx of [-1, 1]) {
+        const ax = squareX + dx;
+
+        if(isWithinBoard(ax, targetY)) {
+            const attackSquare = coordsToSquare(ax, targetY);
+            const piece = getPieceAtSquare(attackSquare, pieces);
+            if (piece?.color === byColor && piece.type === 'pawn') {
+                return true;
+            }
+        }
+    }
+
+    // Все возможные направления атаки кроме пешек
+    const attackConfigs = [
+
+        { dirs: 'knight' as PieceType, 
+            check: (p: Piece) => p.type === 'knight', 
+            maxSteps: 1 },
+
+        { dirs: 'king' as PieceType,
+          check: (p: Piece) => p.type === 'king', 
+          maxSteps: 1 },
+        
+        { dirs: 'rook' as PieceType, 
+          check: (p: Piece) => ['rook', 'queen'].includes(p.type), 
+          maxSteps: MAX_RAY_STEPS },
+        
+        { dirs: 'bishop' as PieceType, 
+          check: (p: Piece) => ['bishop', 'queen'].includes(p.type), 
+          maxSteps: MAX_RAY_STEPS }
+    ];
+    
+    for (const config of attackConfigs) {
+        if (checkAttackDirections(squareX, squareY, byColor, pieces, config)) {
+            return true;
+        }
+    }
+    
+    return false;
+}
+
+export function isKingInCheck(color: PieceColor, pieces: Piece[]): boolean {
+    const king = pieces.find(p => p.type === 'king' && p.color === color);
+    if(king) return isSquareAttacked(king.position, (color === 'white' ? 'black' : 'white'), pieces);
+    return false;
+}
+
+function checkAttackDirections(
+    x: number, 
+    y: number, 
+    byColor: PieceColor, 
+    pieces: Piece[],
+    config: { dirs: PieceType, check: (piece: Piece) => boolean, maxSteps: number }
+): boolean {
+    for (const [dx, dy] of getPieceDirections(config.dirs)) {
+        let steps = 1;
+        
+        while (steps <= config.maxSteps) {
+            const newX = x + steps * dx;
+            const newY = y + steps * dy;
+            
+            if (!isWithinBoard(newX, newY)) break;
+            
+            const piece = getPieceAtSquare(coordsToSquare(newX, newY), pieces);
+            
+            if (piece) {
+                if (piece.color === byColor && config.check(piece)) {
+                    return true;
+                }
+                
+                if (config.maxSteps === MAX_RAY_STEPS) break;
+            }
+            
+            if (steps === config.maxSteps) break;
+            steps++;
+        }
+    }
+    
+    return false;
 }
 
 function getPawnMoves(piece: Piece, pieces: Piece[]): Square[] {
@@ -111,15 +218,9 @@ function getPieceAtSquare(square: Square, pieces: Piece[]): Piece | undefined {
     return pieces.find(piece => piece.position === square);
 }
 
-function getPieceDirections(type: PieceType, color: PieceColor): [number, number][] {
+function getPieceDirections(type: PieceType): [number, number][] {
     switch(type) {
         case 'king':
-            return [
-                [-1, -1], [-1, 0], [-1, 1],
-                [0, -1], [0, 1],
-                [1, -1], [1, 0], [1, 1]
-            ];
-
         case 'queen':
             return [
                 [-1, -1], [-1, 0], [-1, 1],
@@ -146,9 +247,6 @@ function getPieceDirections(type: PieceType, color: PieceColor): [number, number
                 [1, -2], [1, 2],
                 [2, -1], [2, 1]
             ];
-
-        case 'pawn':
-            return [];
 
         default:
             return [];
