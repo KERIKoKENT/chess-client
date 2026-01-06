@@ -1,11 +1,11 @@
-import { Piece, Square, PieceType, files, ranks, squareToCoords, coordsToSquare, PieceColor, MAX_RAY_STEPS } from '../types/chess';
+import { Piece, Square, PieceType, GameState, files, ranks, squareToCoords, coordsToSquare, PieceColor, MAX_RAY_STEPS } from '../types/chess';
 
-export function getValidMoves(piece: Piece, pieces: Piece[]): Square[] {
-    let validMoves: Square[] = [];
+export function getPieceValidMoves(piece: Piece, pieces: Piece[]): Square[] {
+    let pieceValidMoves: Square[] = [];
     const { x: fromX, y: fromY } = squareToCoords(piece.position);
 
     if (piece.type === 'pawn') {
-        validMoves = getPawnMoves(piece, pieces);
+        pieceValidMoves = getPawnMoves(piece, pieces);
     }
 
     const directions = getPieceDirections(piece.type);
@@ -20,7 +20,7 @@ export function getValidMoves(piece: Piece, pieces: Piece[]): Square[] {
                 const targetPiece = getPieceAtSquare(targetSquare, pieces);
 
                 if (!targetPiece || targetPiece.color !== piece.color) {
-                    validMoves.push(targetSquare);
+                    pieceValidMoves.push(targetSquare);
                 }
             }
         }
@@ -36,10 +36,10 @@ export function getValidMoves(piece: Piece, pieces: Piece[]): Square[] {
                 const targetPiece = getPieceAtSquare(targetSquare, pieces);
                 
                 if (!targetPiece) {
-                    validMoves.push(targetSquare);
+                    pieceValidMoves.push(targetSquare);
                 }
                 else if (targetPiece.color !== piece.color) {
-                    validMoves.push(targetSquare);
+                    pieceValidMoves.push(targetSquare);
                     break;
                 } else { 
                     break; 
@@ -57,8 +57,8 @@ export function getValidMoves(piece: Piece, pieces: Piece[]): Square[] {
 
     const safeMoves: Square[] = [];
 
-    for (const move of validMoves) {
-        const newBoard = makeMove(pieces, piece, move);
+    for (const move of pieceValidMoves) {
+        const newBoard = simulateMove(pieces, piece, move);
     
         if (!isKingInCheck(piece.color, newBoard)) {
             safeMoves.push(move);
@@ -70,11 +70,9 @@ export function getValidMoves(piece: Piece, pieces: Piece[]): Square[] {
         const rightSide = getPieceAtSquare(coordsToSquare(x+3, y), pieces);
         const leftSide = getPieceAtSquare(coordsToSquare(x-4, y), pieces);
 
-        const oppColor = piece.color === 'white' ? 'black' : 'white';
-
         if(rightSide?.type === 'rook' && rightSide?.hasMoved === false) {
-            if(!isSquareAttacked(coordsToSquare((x+1), y), oppColor, pieces) &&
-                !isSquareAttacked(coordsToSquare((x+2), y), oppColor, pieces) &&
+            if(!isSquareAttacked(coordsToSquare((x+1), y), oppositeColor(piece.color), pieces) &&
+                !isSquareAttacked(coordsToSquare((x+2), y), oppositeColor(piece.color), pieces) &&
                 !getPieceAtSquare(coordsToSquare((x+1), y), pieces) && 
                 !getPieceAtSquare(coordsToSquare((x+2), y), pieces))
             { 
@@ -83,8 +81,8 @@ export function getValidMoves(piece: Piece, pieces: Piece[]): Square[] {
         }   
 
         if(leftSide?.type === 'rook' && leftSide?.hasMoved === false) {
-            if(!isSquareAttacked(coordsToSquare((x-1), y), oppColor, pieces) &&
-                !isSquareAttacked(coordsToSquare((x-2), y), oppColor, pieces) &&
+            if(!isSquareAttacked(coordsToSquare((x-1), y), oppositeColor(piece.color), pieces) &&
+                !isSquareAttacked(coordsToSquare((x-2), y), oppositeColor(piece.color), pieces) &&
                 !getPieceAtSquare(coordsToSquare((x-1), y), pieces) && 
                 !getPieceAtSquare(coordsToSquare((x-2), y), pieces) &&
                 !getPieceAtSquare(coordsToSquare((x-3), y), pieces))
@@ -97,13 +95,16 @@ export function getValidMoves(piece: Piece, pieces: Piece[]): Square[] {
     return safeMoves;
 }
 
-function makeMove(pieces: Piece[], piece: Piece, move: Square): Piece[] {
-    return pieces
-            .filter(p => p.position !== move)
-            .map(p => p.id === piece.id 
-                ? {...p, position: move, hasMoved: true}
-                : {...p}
-             );
+export function getValidMoves(color: PieceColor, pieces: Piece[]): Record<string, Square[]> {
+    const validMoves: Record<string, Square[]> = {};
+
+    for(const piece of pieces) {
+        if(piece.color === color) {
+            validMoves[piece.id] = getPieceValidMoves(piece, pieces);
+        };
+    }
+
+    return validMoves;
 }
 
 export function isSquareAttacked(square: Square, byColor: PieceColor, pieces: Piece[]): boolean {
@@ -156,7 +157,7 @@ export function isSquareAttacked(square: Square, byColor: PieceColor, pieces: Pi
 
 export function isKingInCheck(color: PieceColor, pieces: Piece[]): boolean {
     const king = pieces.find(p => p.type === 'king' && p.color === color);
-    if(king) return isSquareAttacked(king.position, (color === 'white' ? 'black' : 'white'), pieces);
+    if(king) return isSquareAttacked(king.position, oppositeColor(color), pieces);
     return false;
 }
 
@@ -280,4 +281,88 @@ function getPieceDirections(type: PieceType): [number, number][] {
         default:
             return [];
     }
+}
+
+export function oppositeColor(color: PieceColor): PieceColor {
+    return color === 'white' ? 'black' : 'white';
+}
+
+export function makeMove(game: GameState, selectedPiece: Piece, square: Square): GameState {
+
+    const newPieces = simulateMove(game.pieces, selectedPiece, square);
+    
+    const nextTurn = oppositeColor(game.turn);
+    const isCheck = isKingInCheck(nextTurn, newPieces);
+    
+    const newValidMoves = getValidMoves(nextTurn, newPieces);
+    
+    
+    const hasAnyMove = Object.values(newValidMoves).some(m => m.length > 0);
+    const checkmate = !hasAnyMove && isCheck;
+    const stalemate = !hasAnyMove && !isCheck;
+    
+    
+    const capturedPiece = getPieceAtSquare(square, game.pieces);
+    
+    return {
+        pieces: newPieces,
+        turn: nextTurn,
+        validMoves: newValidMoves,
+        check: isCheck ? nextTurn : null,
+        checkmate: checkmate,
+        stalemate: stalemate,
+        moveHistory: [...game.moveHistory, {
+            pieceId: selectedPiece.id,
+            from: selectedPiece.position,
+            to: square,
+            capturedPiece
+        }]
+    };
+}
+
+function simulateMove(pieces: Piece[], piece: Piece, targetSquare: Square): Piece[] {
+
+    const newPieces = pieces.filter(p => p.position !== targetSquare);
+    
+    if (piece.type === 'king') {
+        const kingX = squareToCoords(piece.position).x;
+        const kingY = squareToCoords(piece.position).y;
+        const targetX = squareToCoords(targetSquare).x;
+        
+        if (Math.abs(targetX - kingX) === 2) {
+            const isQueenside = targetX < kingX; // Это длинная рокировка?
+            const rookFile = isQueenside ? 0 : 7;
+            const rookTargetX = isQueenside ? targetX + 1 : targetX - 1;
+            
+            return newPieces.map(p => {
+                
+                if (p.id === piece.id) {
+                    return { ...p, position: targetSquare, hasMoved: true };
+                }
+                
+                
+                if (p.type === 'rook' && 
+                    p.color === piece.color && 
+                    !p.hasMoved &&
+                    squareToCoords(p.position).x === rookFile &&
+                    squareToCoords(p.position).y === kingY) {
+                    
+                    return { 
+                        ...p, 
+                        position: coordsToSquare(rookTargetX, kingY), 
+                        hasMoved: true 
+                    };
+                }
+                
+                return p;
+            });
+        }
+    }
+    
+    
+    return newPieces.map(p => 
+        p.id === piece.id 
+            ? { ...p, position: targetSquare, hasMoved: true }
+            : p
+    );
 }

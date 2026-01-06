@@ -6,7 +6,7 @@ import './ChessBoard.css';
 interface ChessBoardProps {
     pieces: Piece[];
     selectedPiece: Piece | null;
-    validMoves: Square[];
+    pieceValidMoves: Square[];
     onSquareClick: (square: Square) => void;
     onPieceSelect: (piece: Piece) => void;
     boardSize?: number;
@@ -15,7 +15,7 @@ interface ChessBoardProps {
 const ChessBoard: React.FC<ChessBoardProps> = ({
     pieces,
     selectedPiece,
-    validMoves,
+    pieceValidMoves,
     onSquareClick,
     onPieceSelect,
     boardSize = 600,
@@ -43,7 +43,7 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
                 const piece = getPieceAtSquare(square);
                 const isLight = isLightSquare(square);
                 const isSelected = selectedPiece?.position === square;
-                const isValidMove = validMoves.includes(square);
+                const isValidMove = pieceValidMoves.includes(square);
                 const isCapture = isValidMove && piece !== undefined;
 
                 squares.push(

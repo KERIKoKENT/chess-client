@@ -1,3 +1,5 @@
+import { getValidMoves } from "../utils/gameLogic"
+
 export type PieceType = 'pawn' | 'knight' | 'rook' | 'bishop' | 'queen' | 'king'
 export type PieceColor = 'white' | 'black'
 export type SquareColor = 'light' | 'dark'
@@ -19,12 +21,40 @@ export interface Piece {
 export interface GameState {
     pieces: Piece[],
     turn: PieceColor,
-    selectedPiece: Piece | null,
-    validMoves: Square[],
-    capturedPieces: Piece[],
+    validMoves: Record<string, Square[]>,
+    moveHistory: Move[],
     check: PieceColor | null,
     checkmate: boolean,
     stalemate: boolean
+}
+
+export interface Move {
+    pieceId: string,
+    from: Square,
+    to: Square,
+    capturedPiece: Piece | undefined
+}
+
+export function startGame():
+GameState {
+    return {
+        pieces: INIT_POS,
+        turn: 'white' as PieceColor,
+        validMoves: {
+            "wP1": ['a3', 'a4'],
+            "wP2": ['b3', 'b4'],
+            "wP3": ['c3', 'c4'],
+            "wP4": ['d3', 'd4'],
+            "wP5": ['e3', 'e4'],
+            "wP6": ['f3', 'f4'],
+            "wP7": ['g3', 'g4'],
+            "wP8": ['h3', 'h4']
+        },
+        moveHistory: [],
+        check: null,
+        checkmate: false,
+        stalemate: false
+    }
 }
 
 export const INIT_POS: Piece[] = [
