@@ -1,6 +1,6 @@
 import React, { use, useState } from 'react';
 import ChessBoard from './components/Board/ChessBoard';
-import { Piece, Square, PieceColor } from './types/chess';
+import { Piece, Square, PieceColor, squareToCoords, coordsToSquare } from './types/chess';
 import { INIT_POS } from './types/chess';
 import { getValidMoves, isKingInCheck, isSquareAttacked } from './utils/gameLogic';
 import logo from './logo.svg';
@@ -41,8 +41,36 @@ const App: React.FC = () => {
     setPieces(prev => {
       const filtered = prev.filter(p => p.position !== square);
 
+      
+      if(selectedPiece.type === 'king') {
+        
+        const kingX = squareToCoords(selectedPiece.position).x;
+        const kingY = squareToCoords(selectedPiece.position).y;
+        const target = squareToCoords(square);
+
+        if( (kingX - target.x) === 2) { // Длинная рокировка
+          return filtered.map(p => p.id === selectedPiece.id ? {...p, position: square, hasMoved: true} : p)
+                .map(p => p.type === 'rook' &&
+                  p.color === selectedPiece.color &&
+                  squareToCoords(p.position).x < kingX && 
+                  squareToCoords(p.position).y === kingY 
+                  ? {...p, position: coordsToSquare(kingX - 1, kingY), hasMoved: true} : p);
+        }
+
+        if( (kingX - target.x) === -2) { // Короткая рокировка
+          return filtered.map(p => p.id === selectedPiece.id ? {...p, position: square, hasMoved: true} : p)
+                .map(p => p.type === 'rook' &&
+                 p.color === selectedPiece.color &&
+                 squareToCoords(p.position).x > kingX && 
+                 squareToCoords(p.position).y === kingY 
+                 ? {...p, position: coordsToSquare(kingX + 1, kingY), hasMoved: true} : p);
+        }
+
+      }
+
       return filtered.map(p => p.id === selectedPiece.id ? { ...p, position: square, hasMoved: true } : p);
     });
+
 
     setSelectedPiece(null);
     setValidMoves([]);

@@ -65,6 +65,35 @@ export function getValidMoves(piece: Piece, pieces: Piece[]): Square[] {
         }
     }
 
+    if(piece.type === 'king' && piece.hasMoved === false) {
+        const { x, y } = squareToCoords(piece.position);
+        const rightSide = getPieceAtSquare(coordsToSquare(x+3, y), pieces);
+        const leftSide = getPieceAtSquare(coordsToSquare(x-4, y), pieces);
+
+        const oppColor = piece.color === 'white' ? 'black' : 'white';
+
+        if(rightSide?.type === 'rook' && rightSide?.hasMoved === false) {
+            if(!isSquareAttacked(coordsToSquare((x+1), y), oppColor, pieces) &&
+                !isSquareAttacked(coordsToSquare((x+2), y), oppColor, pieces) &&
+                !getPieceAtSquare(coordsToSquare((x+1), y), pieces) && 
+                !getPieceAtSquare(coordsToSquare((x+2), y), pieces))
+            { 
+                safeMoves.push(coordsToSquare(x+2, y)); 
+            }
+        }   
+
+        if(leftSide?.type === 'rook' && leftSide?.hasMoved === false) {
+            if(!isSquareAttacked(coordsToSquare((x-1), y), oppColor, pieces) &&
+                !isSquareAttacked(coordsToSquare((x-2), y), oppColor, pieces) &&
+                !getPieceAtSquare(coordsToSquare((x-1), y), pieces) && 
+                !getPieceAtSquare(coordsToSquare((x-2), y), pieces) &&
+                !getPieceAtSquare(coordsToSquare((x-3), y), pieces))
+            {
+                safeMoves.push(coordsToSquare(x-2, y));
+            }
+        }
+    }
+
     return safeMoves;
 }
 
@@ -72,7 +101,7 @@ function makeMove(pieces: Piece[], piece: Piece, move: Square): Piece[] {
     return pieces
             .filter(p => p.position !== move)
             .map(p => p.id === piece.id 
-                ? {...p, position: move}
+                ? {...p, position: move, hasMoved: true}
                 : {...p}
              );
 }
