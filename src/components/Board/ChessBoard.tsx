@@ -44,8 +44,9 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
                 const piece = getPieceAtSquare(square);
                 const isLight = isLightSquare(square);
                 const isSelected = selectedPiece?.position === square;
-                const isValidMove = pieceValidMoves.find(p => p.to === square)?.to.includes(square);
-                const isCapture = isValidMove && (piece !== undefined);
+                const move = pieceValidMoves.find(p => p.to === square);
+                const isValidMove = move?.to.includes(square);
+                const isCapture = isValidMove && ((piece !== undefined) || (move?.enPasaunt === true));
 
                 squares.push(
                     <div 

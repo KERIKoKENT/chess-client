@@ -25,8 +25,7 @@ export interface GameState {
     moveHistory: Move[],
     check: PieceColor | null,
     checkmate: boolean,
-    stalemate: boolean,
-    enPasauntSquare?: string
+    stalemate: boolean
 }
 
 export interface Move {

@@ -13,6 +13,7 @@ const App: React.FC = () => {
 
   const handlePieceSelect = (piece: Piece) => {
 
+
     if (piece.color !== game.turn) return;
 
     if (selectedPiece?.id === piece.id) {
