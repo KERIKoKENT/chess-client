@@ -25,7 +25,8 @@ export interface GameState {
     moveHistory: Move[],
     check: PieceColor | null,
     checkmate: boolean,
-    stalemate: boolean
+    stalemate: boolean,
+    promotionMenu: PromotionState
 }
 
 export interface Move {
@@ -34,7 +35,13 @@ export interface Move {
     to: Square,
     capturedPiece?: Piece | undefined,
     enPasaunt?: boolean,
-    promotion?: PieceType
+    promotion?: boolean
+}
+
+export interface PromotionState {
+    piece: Piece | null,
+    targetSquare: Square | null,
+    visible: boolean
 }
 
 export function startGame():
@@ -95,7 +102,12 @@ export function startGame():
         moveHistory: [],
         check: null,
         checkmate: false,
-        stalemate: false
+        stalemate: false,
+        promotionMenu: {
+            piece: null,
+            targetSquare: null,
+            visible: false
+        }
     }
 }
 

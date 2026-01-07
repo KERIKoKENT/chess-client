@@ -115,6 +115,14 @@ export function getPieceValidMoves(piece: Piece, game: GameState): Move[] {
         }
     }
 
+
+    //Превращение пешки, любой ход с предпоследнего ряда подходит
+    if(piece.type === 'pawn' && Number(piece.position[1]) === (piece.color === 'white' ? 7 : 2)) {
+        for (const move of safeMoves) {
+            move.promotion = true;
+        }
+    }
+
     return safeMoves;
 }
 

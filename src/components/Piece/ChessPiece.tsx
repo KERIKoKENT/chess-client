@@ -1,15 +1,16 @@
 import React from 'react';
-import { Piece, PieceType } from '../../types/chess';
+import { PieceType, PieceColor } from '../../types/chess';
 import './ChessPiece.css';
 
 interface ChessPieceProps {
-    piece: Piece,
+    pieceType: PieceType,
+    pieceColor: PieceColor,
     size: number,
     isSelected: boolean,
     onClick: () => void
 }
 
-const ChessPiece: React.FC<ChessPieceProps> = ({piece, size, isSelected, onClick}) => {
+const ChessPiece: React.FC<ChessPieceProps> = ({pieceType, pieceColor, size, isSelected, onClick}) => {
     const getPieceSymbol = (type: PieceType, color: string) => {
         const symbols: Record<PieceType, { white: string, black: string}> = {
             king: { white: '♔', black: '♚' },
@@ -38,25 +39,25 @@ const ChessPiece: React.FC<ChessPieceProps> = ({piece, size, isSelected, onClick
 
     return (
         <div
-            className={`chess-piece ${piece.color} ${isSelected ? 'selected' : ''}`}
+            className={`chess-piece ${pieceColor} ${isSelected ? 'selected' : ''}`}
             style={{
                 width: size,
                 height: size,
                 fontSize: size * 0.7
             }}
             onClick={onClick}
-            title={`${getPieceName(piece.type)} (${piece.color === 'white' ? 'Белые' : 'Чёрные'})`}
+            title={`${getPieceName(pieceType)} (${pieceColor === 'white' ? 'Белые' : 'Чёрные'})`}
             draggable={false}
         >
             <div className="piece-symbol">
-                {getPieceSymbol(piece.type, piece.color)}
+                {getPieceSymbol(pieceType, pieceColor)}
             </div>
 
             {isSelected && (
                 <div className="selection-ring" />
             )}
 
-            <div className={`piece-glow ${piece.color}`} />
+            <div className={`piece-glow ${pieceColor}`} />
         </div>
     );
 }

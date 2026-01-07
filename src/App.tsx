@@ -1,7 +1,7 @@
 import React, { use, useState } from 'react';
 import ChessBoard from './components/Board/ChessBoard';
-import { Piece, Square, PieceColor, squareToCoords, coordsToSquare, GameState, startGame } from './types/chess';
-import { makeMove, getPieceAtSquare } from './utils/gameLogic';
+import { Piece, Square, PieceColor, squareToCoords, coordsToSquare, GameState, startGame, PromotionState, PieceType } from './types/chess';
+import { makeMove, getPieceAtSquare, oppositeColor } from './utils/gameLogic';
 import './App.css';
 
 const App: React.FC = () => {
@@ -13,7 +13,7 @@ const App: React.FC = () => {
 
   const handlePieceSelect = (piece: Piece) => {
 
-
+    if(game.promotionMenu.visible) return;
     if (piece.color !== game.turn) return;
 
     if (selectedPiece?.id === piece.id) {
@@ -25,7 +25,7 @@ const App: React.FC = () => {
   };
 
   const handleSquareClick = (square: Square) => {
-    if (!selectedPiece) return;
+    if (!selectedPiece || game.promotionMenu.visible) return;
 
     const madeMove = pieceValidMoves.find(p => p.to === square);
 
@@ -38,9 +38,13 @@ const App: React.FC = () => {
       return;
     }
 
-
     setGame(prev => makeMove({
       ...prev,
+      promotionMenu: (madeMove.promotion ? {
+        piece: selectedPiece,
+        targetSquare: square,
+        visible: true
+      } : prev.promotionMenu),
       moveHistory: [
         ...prev.moveHistory,
         {
@@ -55,11 +59,31 @@ const App: React.FC = () => {
     setSelectedPiece(null);
   };
 
+  const handlePromotion = (type: PieceType) => {
+    const { piece, targetSquare } = game.promotionMenu;
+    if(!piece || !targetSquare) return;
+
+    const newPieces = game.pieces.map(p =>
+        p.id === piece.id ? {...p, type, position: targetSquare, hasMoved: true } : p
+    )
+
+    setGame(prev => ({
+      ...prev,
+      pieces: newPieces,
+      promotionMenu: {
+        piece: null,
+        targetSquare: null,
+        visible: false
+      }
+    }));
+}
+
   return (
     <div style={{ padding: 20 }}>
 
         <ChessBoard game={game} selectedPiece={selectedPiece} pieceValidMoves={pieceValidMoves} 
-        onPieceSelect={handlePieceSelect} onSquareClick={handleSquareClick} boardSize={600} />
+        onPieceSelect={handlePieceSelect} onSquareClick={handleSquareClick} onPromotionSelect={handlePromotion} boardSize={600} />
+
     </div>
   );
 }

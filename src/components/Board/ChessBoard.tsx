@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { Square, Piece, isLightSquare, allSquares, GameState, Move } from '../../types/chess';
+import { Square, Piece, isLightSquare, allSquares, GameState, Move, PieceType } from '../../types/chess';
 import { getEnPasaunt } from '../../utils/gameLogic'
 import ChessPiece from '../Piece/ChessPiece';
+import PromotionPopup from '../PromotionPopup/PromotionPopup';
 import './ChessBoard.css';  
 
 interface ChessBoardProps {
@@ -10,6 +11,7 @@ interface ChessBoardProps {
     pieceValidMoves: Move[];
     onSquareClick: (square: Square) => void;
     onPieceSelect: (piece: Piece) => void;
+    onPromotionSelect: (type: PieceType) => void;
     boardSize?: number;
 }
 
@@ -19,6 +21,7 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
     pieceValidMoves,
     onSquareClick,
     onPieceSelect,
+    onPromotionSelect,
     boardSize = 600,
 }) => {
     const squareSize = boardSize / 8;
@@ -73,7 +76,8 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
 
                         {piece && (
                             <ChessPiece 
-                                piece={piece}
+                                pieceType={piece.type}
+                                pieceColor={piece.color}
                                 size={squareSize * 0.85}
                                 isSelected={isSelected}
                                 onClick={() => onPieceSelect(piece)}
@@ -102,6 +106,17 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
                 }}
             >
                 {RenderSquares()}
+            </div>
+
+            <div className="promotion-menu">
+                {game.promotionMenu.visible && game.promotionMenu.piece && (
+                    <PromotionPopup 
+                        visible={game.promotionMenu.visible}
+                        color={game.promotionMenu.piece.color}
+                        targetSquare={game.promotionMenu.targetSquare}
+                        onSelect={(t) => onPromotionSelect(t)}
+                    />
+                )}
             </div>
         </div>
     );
