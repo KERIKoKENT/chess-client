@@ -30,7 +30,11 @@ const App: React.FC = () => {
     const madeMove = pieceValidMoves.find(p => p.to === square);
 
     if (!madeMove) {
-      setSelectedPiece(null);
+      const clickedPiece = getPieceAtSquare(square, game.pieces);
+      if(clickedPiece?.color === selectedPiece.color)
+        setSelectedPiece(clickedPiece);
+      else
+        setSelectedPiece(null);
       return;
     }
 

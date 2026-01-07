@@ -83,7 +83,14 @@ export function startGame():
             "wN2": [
                 { pieceId: 'wN2', from: 'g1', to: 'f3' },
                 { pieceId: 'wN2', from: 'g1', to: 'h3' }
-            ]
+            ],
+
+            "wB1": [], 
+            "wB2": [],
+            "wR1": [], 
+            "wR2": [],
+            "wQ": [], 
+            "wK": []
         },
         moveHistory: [],
         check: null,
