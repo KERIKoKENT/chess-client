@@ -1,19 +1,20 @@
 import React, { useState } from 'react';
-import { Square, Piece, isLightSquare, allSquares } from '../../types/chess';
+import { Square, Piece, isLightSquare, allSquares, GameState, Move } from '../../types/chess';
+import { getEnPasaunt } from '../../utils/gameLogic'
 import ChessPiece from '../Piece/ChessPiece';
 import './ChessBoard.css';  
 
 interface ChessBoardProps {
-    pieces: Piece[];
+    game: GameState;
     selectedPiece: Piece | null;
-    pieceValidMoves: Square[];
+    pieceValidMoves: Move[];
     onSquareClick: (square: Square) => void;
     onPieceSelect: (piece: Piece) => void;
     boardSize?: number;
 }
 
 const ChessBoard: React.FC<ChessBoardProps> = ({
-    pieces,
+    game,
     selectedPiece,
     pieceValidMoves,
     onSquareClick,
@@ -24,7 +25,7 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
     const [boardOrientation, setBoardOrientation] = useState<'white' | 'black'>('white');
 
     const getPieceAtSquare = (square: Square): Piece | undefined => {
-        return pieces.find(piece => piece.position === square);
+        return game.pieces.find(piece => piece.position === square);
     }
 
     const RenderSquares = () => {
@@ -43,8 +44,8 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
                 const piece = getPieceAtSquare(square);
                 const isLight = isLightSquare(square);
                 const isSelected = selectedPiece?.position === square;
-                const isValidMove = pieceValidMoves.includes(square);
-                const isCapture = isValidMove && piece !== undefined;
+                const isValidMove = pieceValidMoves.find(p => p.to === square)?.to.includes(square);
+                const isCapture = isValidMove && (piece !== undefined);
 
                 squares.push(
                     <div 

@@ -1,9 +1,7 @@
 import React, { use, useState } from 'react';
 import ChessBoard from './components/Board/ChessBoard';
 import { Piece, Square, PieceColor, squareToCoords, coordsToSquare, GameState, startGame } from './types/chess';
-import { INIT_POS } from './types/chess';
-import { getPieceValidMoves, getValidMoves, isKingInCheck, isSquareAttacked, oppositeColor, makeMove } from './utils/gameLogic';
-import logo from './logo.svg';
+import { makeMove, getPieceAtSquare } from './utils/gameLogic';
 import './App.css';
 
 const App: React.FC = () => {
@@ -28,16 +26,26 @@ const App: React.FC = () => {
   const handleSquareClick = (square: Square) => {
     if (!selectedPiece) return;
 
-    if (!pieceValidMoves.includes(square)) {
+    const madeMove = pieceValidMoves.find(p => p.to === square);
+
+    if (!madeMove) {
       setSelectedPiece(null);
       return;
     }
 
 
-    const newBoard = makeMove(game, selectedPiece, square);
-
-    setGame(newBoard);
-    console.log(newBoard);
+    setGame(prev => makeMove({
+      ...prev,
+      moveHistory: [
+        ...prev.moveHistory,
+        {
+          pieceId: selectedPiece.id,
+          from: selectedPiece.position,
+          to: square,
+          capturedPiece: getPieceAtSquare(square, prev.pieces)
+        }
+      ]
+    }, selectedPiece, madeMove) );
 
     setSelectedPiece(null);
   };
@@ -45,7 +53,7 @@ const App: React.FC = () => {
   return (
     <div style={{ padding: 20 }}>
 
-        <ChessBoard pieces={game.pieces} selectedPiece={selectedPiece} pieceValidMoves={pieceValidMoves} 
+        <ChessBoard game={game} selectedPiece={selectedPiece} pieceValidMoves={pieceValidMoves} 
         onPieceSelect={handlePieceSelect} onSquareClick={handleSquareClick} boardSize={600} />
     </div>
   );

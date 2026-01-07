@@ -21,34 +21,70 @@ export interface Piece {
 export interface GameState {
     pieces: Piece[],
     turn: PieceColor,
-    validMoves: Record<string, Square[]>,
+    validMoves: Record<string, Move[]>,
     moveHistory: Move[],
     check: PieceColor | null,
     checkmate: boolean,
-    stalemate: boolean
+    stalemate: boolean,
+    enPasauntSquare?: string
 }
 
 export interface Move {
     pieceId: string,
     from: Square,
     to: Square,
-    capturedPiece: Piece | undefined
+    capturedPiece?: Piece | undefined,
+    enPasaunt?: boolean,
+    promotion?: PieceType
 }
 
 export function startGame():
-GameState {
+    GameState {
     return {
         pieces: INIT_POS,
         turn: 'white' as PieceColor,
         validMoves: {
-            "wP1": ['a3', 'a4'],
-            "wP2": ['b3', 'b4'],
-            "wP3": ['c3', 'c4'],
-            "wP4": ['d3', 'd4'],
-            "wP5": ['e3', 'e4'],
-            "wP6": ['f3', 'f4'],
-            "wP7": ['g3', 'g4'],
-            "wP8": ['h3', 'h4']
+            "wP1": [
+                { pieceId: 'wP1', from: 'a2', to: 'a3' },
+                { pieceId: 'wP1', from: 'a2', to: 'a4' }
+            ],
+            "wP2": [
+                { pieceId: 'wP2', from: 'b2', to: 'b3' },
+                { pieceId: 'wP2', from: 'b2', to: 'b4' }
+            ],
+            "wP3": [
+                { pieceId: 'wP3', from: 'c2', to: 'c3' },
+                { pieceId: 'wP3', from: 'c2', to: 'c4' }
+            ],
+            "wP4": [
+                { pieceId: 'wP4', from: 'd2', to: 'd3' },
+                { pieceId: 'wP4', from: 'd2', to: 'd4' }
+            ],
+            "wP5": [
+                { pieceId: 'wP5', from: 'e2', to: 'e3' },
+                { pieceId: 'wP5', from: 'e2', to: 'e4' }
+            ],
+            "wP6": [
+                { pieceId: 'wP6', from: 'f2', to: 'f3' },
+                { pieceId: 'wP6', from: 'f2', to: 'f4' }
+            ],
+            "wP7": [
+                { pieceId: 'wP7', from: 'g2', to: 'g3' },
+                { pieceId: 'wP7', from: 'g2', to: 'g4' }
+            ],
+            "wP8": [
+                { pieceId: 'wP8', from: 'h2', to: 'h3' },
+                { pieceId: 'wP8', from: 'h2', to: 'h4' }
+            ],
+
+            "wN1": [
+                { pieceId: 'wN1', from: 'b1', to: 'a3' },
+                { pieceId: 'wN1', from: 'b1', to: 'c3' }
+            ],
+            "wN2": [
+                { pieceId: 'wN2', from: 'g1', to: 'f3' },
+                { pieceId: 'wN2', from: 'g1', to: 'h3' }
+            ]
         },
         moveHistory: [],
         check: null,
@@ -76,7 +112,7 @@ export const INIT_POS: Piece[] = [
     { id: 'wP7', type: 'pawn', color: 'white', position: 'g2', hasMoved: false },
     { id: 'wP8', type: 'pawn', color: 'white', position: 'h2', hasMoved: false },
 
-    
+
     { id: 'bR1', type: 'rook', color: 'black', position: 'a8', hasMoved: false },
     { id: 'bN1', type: 'knight', color: 'black', position: 'b8', hasMoved: false },
     { id: 'bB1', type: 'bishop', color: 'black', position: 'c8', hasMoved: false },
@@ -113,12 +149,12 @@ export function isLightSquare(square: Square): boolean {
 }
 
 export function squareToCoords(square: Square): { x: number, y: number } {
-        const file = square[0] as File;
-        const rank = square[1] as Rank;
-        return {
-            x: files.indexOf(file),
-            y: ranks.indexOf(rank) 
-        }
+    const file = square[0] as File;
+    const rank = square[1] as Rank;
+    return {
+        x: files.indexOf(file),
+        y: ranks.indexOf(rank)
+    }
 }
 
 export function coordsToSquare(x: number, y: number): Square {
