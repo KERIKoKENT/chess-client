@@ -14,8 +14,7 @@ export interface Piece {
     id: string,
     type: PieceType,
     color: PieceColor,
-    position: Square,
-    hasMoved: boolean
+    position: Square
 }
 
 export interface GameState {
@@ -121,42 +120,42 @@ export function startGame():
 }
 
 export const INIT_POS: Piece[] = [
-    { id: 'wR1', type: 'rook', color: 'white', position: 'a1', hasMoved: false },
-    { id: 'wN1', type: 'knight', color: 'white', position: 'b1', hasMoved: false },
-    { id: 'wB1', type: 'bishop', color: 'white', position: 'c1', hasMoved: false },
-    { id: 'wQ', type: 'queen', color: 'white', position: 'd1', hasMoved: false },
-    { id: 'wK', type: 'king', color: 'white', position: 'e1', hasMoved: false },
-    { id: 'wB2', type: 'bishop', color: 'white', position: 'f1', hasMoved: false },
-    { id: 'wN2', type: 'knight', color: 'white', position: 'g1', hasMoved: false },
-    { id: 'wR2', type: 'rook', color: 'white', position: 'h1', hasMoved: false },
+    { id: 'wR1', type: 'rook', color: 'white', position: 'a1' },
+    { id: 'wN1', type: 'knight', color: 'white', position: 'b1' },
+    { id: 'wB1', type: 'bishop', color: 'white', position: 'c1' },
+    { id: 'wQ', type: 'queen', color: 'white', position: 'd1' },
+    { id: 'wK', type: 'king', color: 'white', position: 'e1' },
+    { id: 'wB2', type: 'bishop', color: 'white', position: 'f1' },
+    { id: 'wN2', type: 'knight', color: 'white', position: 'g1' },
+    { id: 'wR2', type: 'rook', color: 'white', position: 'h1' },
 
-    { id: 'wP1', type: 'pawn', color: 'white', position: 'a2', hasMoved: false },
-    { id: 'wP2', type: 'pawn', color: 'white', position: 'b2', hasMoved: false },
-    { id: 'wP3', type: 'pawn', color: 'white', position: 'c2', hasMoved: false },
-    { id: 'wP4', type: 'pawn', color: 'white', position: 'd2', hasMoved: false },
-    { id: 'wP5', type: 'pawn', color: 'white', position: 'e2', hasMoved: false },
-    { id: 'wP6', type: 'pawn', color: 'white', position: 'f2', hasMoved: false },
-    { id: 'wP7', type: 'pawn', color: 'white', position: 'g2', hasMoved: false },
-    { id: 'wP8', type: 'pawn', color: 'white', position: 'h2', hasMoved: false },
+    { id: 'wP1', type: 'pawn', color: 'white', position: 'a2' },
+    { id: 'wP2', type: 'pawn', color: 'white', position: 'b2' },
+    { id: 'wP3', type: 'pawn', color: 'white', position: 'c2' },
+    { id: 'wP4', type: 'pawn', color: 'white', position: 'd2' },
+    { id: 'wP5', type: 'pawn', color: 'white', position: 'e2' },
+    { id: 'wP6', type: 'pawn', color: 'white', position: 'f2' },
+    { id: 'wP7', type: 'pawn', color: 'white', position: 'g2' },
+    { id: 'wP8', type: 'pawn', color: 'white', position: 'h2' },
 
 
-    { id: 'bR1', type: 'rook', color: 'black', position: 'a8', hasMoved: false },
-    { id: 'bN1', type: 'knight', color: 'black', position: 'b8', hasMoved: false },
-    { id: 'bB1', type: 'bishop', color: 'black', position: 'c8', hasMoved: false },
-    { id: 'bQ', type: 'queen', color: 'black', position: 'd8', hasMoved: false },
-    { id: 'bK', type: 'king', color: 'black', position: 'e8', hasMoved: false },
-    { id: 'bB2', type: 'bishop', color: 'black', position: 'f8', hasMoved: false },
-    { id: 'bN2', type: 'knight', color: 'black', position: 'g8', hasMoved: false },
-    { id: 'bR2', type: 'rook', color: 'black', position: 'h8', hasMoved: false },
+    { id: 'bR1', type: 'rook', color: 'black', position: 'a8' },
+    { id: 'bN1', type: 'knight', color: 'black', position: 'b8' },
+    { id: 'bB1', type: 'bishop', color: 'black', position: 'c8' },
+    { id: 'bQ', type: 'queen', color: 'black', position: 'd8' },
+    { id: 'bK', type: 'king', color: 'black', position: 'e8' },
+    { id: 'bB2', type: 'bishop', color: 'black', position: 'f8' },
+    { id: 'bN2', type: 'knight', color: 'black', position: 'g8' },
+    { id: 'bR2', type: 'rook', color: 'black', position: 'h8' },
 
-    { id: 'bP1', type: 'pawn', color: 'black', position: 'a7', hasMoved: false },
-    { id: 'bP2', type: 'pawn', color: 'black', position: 'b7', hasMoved: false },
-    { id: 'bP3', type: 'pawn', color: 'black', position: 'c7', hasMoved: false },
-    { id: 'bP4', type: 'pawn', color: 'black', position: 'd7', hasMoved: false },
-    { id: 'bP5', type: 'pawn', color: 'black', position: 'e7', hasMoved: false },
-    { id: 'bP6', type: 'pawn', color: 'black', position: 'f7', hasMoved: false },
-    { id: 'bP7', type: 'pawn', color: 'black', position: 'g7', hasMoved: false },
-    { id: 'bP8', type: 'pawn', color: 'black', position: 'h7', hasMoved: false }
+    { id: 'bP1', type: 'pawn', color: 'black', position: 'a7'},
+    { id: 'bP2', type: 'pawn', color: 'black', position: 'b7' },
+    { id: 'bP3', type: 'pawn', color: 'black', position: 'c7' },
+    { id: 'bP4', type: 'pawn', color: 'black', position: 'd7' },
+    { id: 'bP5', type: 'pawn', color: 'black', position: 'e7' },
+    { id: 'bP6', type: 'pawn', color: 'black', position: 'f7' },
+    { id: 'bP7', type: 'pawn', color: 'black', position: 'g7' },
+    { id: 'bP8', type: 'pawn', color: 'black', position: 'h7' }
 ]
 
 export const files: File[] = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']

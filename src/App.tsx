@@ -24,6 +24,7 @@ const App: React.FC = () => {
   };
 
   const handleSquareClick = (square: Square) => {
+
     if (!selectedPiece || game.promotionMenu.visible) return;
 
     const madeMove = pieceValidMoves.find(p => p.to === square);
@@ -56,6 +57,7 @@ const App: React.FC = () => {
     }, selectedPiece, madeMove));
 
     setSelectedPiece(null);
+
   };
 
   const handlePromotion = (type: PieceType) => {
@@ -63,7 +65,7 @@ const App: React.FC = () => {
     if (!piece || !targetSquare) return;
 
     const newPieces = game.pieces.map(p =>
-      p.id === piece.id ? { ...p, type, position: targetSquare, hasMoved: true } : p
+      p.id === piece.id ? { ...p, type, position: targetSquare } : p
     )
 
     const newBoard = {
@@ -90,6 +92,7 @@ const App: React.FC = () => {
       checkmate,
       validMoves
     }));
+    
   }
 
   const restartGame = () => {

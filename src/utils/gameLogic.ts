@@ -80,12 +80,12 @@ export function getPieceValidMoves(piece: Piece, game: GameState): Move[] {
         }
     }
 
-    if(piece.type === 'king' && piece.hasMoved === false && !isKingInCheck(piece.color, game.pieces)) {
+    if(piece.type === 'king' && !pieceHasMoved(piece, game) && !isKingInCheck(piece.color, game.pieces)) {
         const { x, y } = squareToCoords(piece.position);
         const rightSide = getPieceAtSquare(coordsToSquare(x+3, y), game.pieces);
         const leftSide = getPieceAtSquare(coordsToSquare(x-4, y), game.pieces);
 
-        if(rightSide?.type === 'rook' && rightSide?.hasMoved === false) {
+        if(rightSide?.type === 'rook' && !pieceHasMoved(rightSide, game)) {
             if(!isSquareAttacked(coordsToSquare((x+1), y), oppositeColor(piece.color), game.pieces) &&
                 !isSquareAttacked(coordsToSquare((x+2), y), oppositeColor(piece.color), game.pieces) &&
                 !getPieceAtSquare(coordsToSquare((x+1), y), game.pieces) && 
@@ -99,7 +99,7 @@ export function getPieceValidMoves(piece: Piece, game: GameState): Move[] {
             }
         }   
 
-        if(leftSide?.type === 'rook' && leftSide?.hasMoved === false) {
+        if(leftSide?.type === 'rook' && !pieceHasMoved(leftSide, game)) {
             if(!isSquareAttacked(coordsToSquare((x-1), y), oppositeColor(piece.color), game.pieces) &&
                 !isSquareAttacked(coordsToSquare((x-2), y), oppositeColor(piece.color), game.pieces) &&
                 !getPieceAtSquare(coordsToSquare((x-1), y), game.pieces) && 
@@ -357,7 +357,6 @@ export function makeMove(game: GameState, selectedPiece: Piece, move: Move): Gam
     
     
     const capturedPiece = getPieceAtSquare(move.to, game.pieces);
-    selectedPiece.hasMoved = true;
 
     if(move.enPasaunt === true) {
         return {
@@ -399,20 +398,18 @@ function simulateMove(pieces: Piece[], piece: Piece, targetSquare: Square): Piec
             return newPieces.map(p => {
                 
                 if (p.id === piece.id) {
-                    return { ...p, position: targetSquare, hasMoved: true };
+                    return { ...p, position: targetSquare };
                 }
                 
                 
                 if (p.type === 'rook' && 
-                    p.color === piece.color && 
-                    !p.hasMoved &&
+                    p.color === piece.color &&
                     squareToCoords(p.position).x === rookFile &&
                     squareToCoords(p.position).y === kingY) {
                     
                     return { 
                         ...p, 
-                        position: coordsToSquare(rookTargetX, kingY), 
-                        hasMoved: true 
+                        position: coordsToSquare(rookTargetX, kingY)
                     };
                 }
                 
@@ -424,7 +421,7 @@ function simulateMove(pieces: Piece[], piece: Piece, targetSquare: Square): Piec
     
     return newPieces.map(p => 
         p.id === piece.id 
-            ? { ...p, position: targetSquare, hasMoved: true }
+            ? { ...p, position: targetSquare }
             : p
     );
 }
@@ -453,4 +450,8 @@ export function getEnPasaunt(piece: Piece | null, square: Square, game: GameStat
     }
 
     return false;
+}
+
+export function pieceHasMoved(piece: Piece, game: GameState): boolean {
+    return game.moveHistory.some((move) => move.pieceId === piece.id);
 }
