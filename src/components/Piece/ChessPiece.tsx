@@ -1,5 +1,5 @@
 import React from 'react';
-import { PieceType, PieceColor } from '../../types/chess';
+import { Piece, PieceType, PieceColor } from '../../types/chess';
 import './ChessPiece.css';
 
 interface ChessPieceProps {
@@ -11,15 +11,15 @@ interface ChessPieceProps {
     onClick: () => void
 }
 
-const ChessPiece: React.FC<ChessPieceProps> = ({pieceType, pieceColor, size, isSelected, inCheck, onClick}) => {
+const ChessPiece: React.FC<ChessPieceProps> = ({ pieceType, pieceColor, size, isSelected, inCheck, onClick }) => {
     const getPieceSymbol = (type: PieceType, color: string) => {
-        const symbols: Record<PieceType, { white: string, black: string}> = {
+        const symbols: Record<PieceType, { white: string, black: string }> = {
             king: { white: '♔', black: '♚' },
             queen: { white: '♕', black: '♛' },
             rook: { white: '♖', black: '♜' },
             bishop: { white: '♗', black: '♝' },
             knight: { white: '♘', black: '♞' },
-            pawn: { white: '♙', black: '♟' },    
+            pawn: { white: '♙', black: '♟' },
         }
 
         return symbols[type][color as 'white' | 'black'];
@@ -48,7 +48,6 @@ const ChessPiece: React.FC<ChessPieceProps> = ({pieceType, pieceColor, size, isS
             }}
             onClick={onClick}
             title={`${getPieceName(pieceType)} (${pieceColor === 'white' ? 'Белые' : 'Чёрные'})`}
-            draggable={false}
         >
             <div className="piece-symbol">
                 {getPieceSymbol(pieceType, pieceColor)}

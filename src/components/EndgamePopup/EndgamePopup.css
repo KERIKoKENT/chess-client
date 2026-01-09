@@ -1,0 +1,99 @@
+.endgame-popup-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0);
+  backdrop-filter: blur(0px);
+  z-index: 50;
+  animation: fadeInOverlay 0.4s forwards;
+}
+
+.endgame-popup {
+  width: 320px;
+  max-width: 90%;
+  background: rgba(30, 30, 30, 0.95);
+  border-radius: 20px;
+  padding: 24px 24px 20px 24px;
+  text-align: center;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  animation: scaleIn 0.3s ease-out forwards;
+}
+
+.endgame-popup-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.checkmate-white {
+  color: #4ade80;
+}
+
+.checkmate-black {
+  color: #f87171;
+}
+
+.stalemate {
+  color: #9ca3af;
+}
+
+.endgame-popup-subtitle {
+  margin-top: 6px;
+  font-size: 0.875rem;
+  color: #d1d5db;
+}
+
+.endgame-popup-buttons {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.popup-btn {
+  flex: 1;
+  border-radius: 12px;
+  padding: 10px 0;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+  border: none;
+}
+
+.popup-btn.new-game {
+  background-color: rgba(99, 102, 241, 0.9);
+  color: #fff;
+}
+
+.popup-btn.new-game:hover {
+  background-color: #6366f1;
+}
+
+.popup-btn.new-game:active {
+  transform: scale(0.97);
+}
+
+@keyframes scaleIn {
+  0% {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeInOverlay {
+    0% {
+        background: rgba(0, 0, 0, 0);
+        backdrop-filter: blur(0px);
+    }
+    100% {
+        background: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(4px);
+    }
+}

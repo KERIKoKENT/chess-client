@@ -1,6 +1,6 @@
-import React, { use, useState } from 'react';
+import React, { use, useState, useEffect } from 'react';
 import ChessBoard from './components/Board/ChessBoard';
-import { Piece, Square, PieceColor, squareToCoords, coordsToSquare, GameState, startGame, PromotionState, PieceType } from './types/chess';
+import { Piece, Square, PieceColor, squareToCoords, coordsToSquare, GameState, startGame, PromotionState, PieceType, DragState } from './types/chess';
 import { makeMove, getPieceAtSquare, oppositeColor, getValidMoves, isKingInCheck } from './utils/gameLogic';
 import './App.css';
 
@@ -9,7 +9,6 @@ const App: React.FC = () => {
   const [game, setGame] = useState<GameState>(() => startGame());
   const [selectedPiece, setSelectedPiece] = useState<Piece | null>(null);
   const pieceValidMoves = selectedPiece ? game.validMoves[selectedPiece.id] : [];
-  
 
   const handlePieceSelect = (piece: Piece) => {
 
@@ -31,7 +30,7 @@ const App: React.FC = () => {
 
     if (!madeMove) {
       const clickedPiece = getPieceAtSquare(square, game.pieces);
-      if(clickedPiece?.color === selectedPiece.color)
+      if (clickedPiece?.color === selectedPiece.color)
         setSelectedPiece(clickedPiece);
       else
         setSelectedPiece(null);
@@ -54,17 +53,17 @@ const App: React.FC = () => {
           capturedPiece: getPieceAtSquare(square, prev.pieces)
         }
       ]
-    }, selectedPiece, madeMove) );
+    }, selectedPiece, madeMove));
 
     setSelectedPiece(null);
   };
 
   const handlePromotion = (type: PieceType) => {
     const { piece, targetSquare } = game.promotionMenu;
-    if(!piece || !targetSquare) return;
+    if (!piece || !targetSquare) return;
 
     const newPieces = game.pieces.map(p =>
-        p.id === piece.id ? {...p, type, position: targetSquare, hasMoved: true } : p
+      p.id === piece.id ? { ...p, type, position: targetSquare, hasMoved: true } : p
     )
 
     const newBoard = {
@@ -91,13 +90,17 @@ const App: React.FC = () => {
       checkmate,
       validMoves
     }));
-}
+  }
+
+  const restartGame = () => {
+    setGame(startGame());
+  }
 
   return (
     <div style={{ padding: 20 }}>
 
-        <ChessBoard game={game} selectedPiece={selectedPiece} pieceValidMoves={pieceValidMoves} 
-        onPieceSelect={handlePieceSelect} onSquareClick={handleSquareClick} onPromotionSelect={handlePromotion} />
+      <ChessBoard game={game} selectedPiece={selectedPiece} pieceValidMoves={pieceValidMoves}
+        onPieceSelect={handlePieceSelect} onSquareClick={handleSquareClick} onPromotionSelect={handlePromotion} onRestartGame={restartGame} />
 
     </div>
   );

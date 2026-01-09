@@ -1,17 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { Square, Piece, isLightSquare, allSquares, GameState, Move, PieceType } from '../../types/chess';
+import { Square, Piece, isLightSquare, allSquares, GameState, Move, PieceType, DragState, startGame } from '../../types/chess';
 import { getEnPasaunt, isKingInCheck } from '../../utils/gameLogic'
 import ChessPiece from '../Piece/ChessPiece';
 import PromotionPopup from '../PromotionPopup/PromotionPopup';
+import EndgamePopup from '../EndgamePopup/EndgamePopup';
 import './ChessBoard.css';
 
 interface ChessBoardProps {
-    game: GameState;
-    selectedPiece: Piece | null;
-    pieceValidMoves: Move[];
-    onSquareClick: (square: Square) => void;
-    onPieceSelect: (piece: Piece) => void;
-    onPromotionSelect: (type: PieceType) => void;
+    game: GameState,
+    selectedPiece: Piece | null,
+    pieceValidMoves: Move[],
+    onSquareClick: (square: Square) => void,
+    onPieceSelect: (piece: Piece) => void,
+    onPromotionSelect: (type: PieceType) => void,
+    onRestartGame: () => void
 }
 
 const ChessBoard: React.FC<ChessBoardProps> = ({
@@ -20,7 +22,8 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
     pieceValidMoves,
     onSquareClick,
     onPieceSelect,
-    onPromotionSelect
+    onPromotionSelect,
+    onRestartGame
 }) => {
     const [boardOrientation, setBoardOrientation] = useState<'white' | 'black'>('white');
     const [boardSize, setBoardSize] = useState(600);
@@ -69,7 +72,7 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
                 squares.push(
                     <div
                         key={square}
-                        id={`sq${(rankIndex * 8) + (fileIndex+1)}`}
+                        id={`sq${(rankIndex * 8) + (fileIndex + 1)}`}
                         className={`chess-square 
                         ${isLight ? 'light' : 'dark'} 
                         ${isSelected ? 'selected' : ''}
@@ -128,7 +131,13 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
                         />
                     )}
                 </div>
-                
+
+                <EndgamePopup 
+                    checkmate={game.checkmate ? game.turn : null}
+                    stalemate={game.stalemate}
+                    onNewGame={onRestartGame}
+                />
+
             </div>
 
             <div className="board-controls">

@@ -44,6 +44,15 @@ export interface PromotionState {
     visible: boolean
 }
 
+export interface DragState {
+    piece: Piece | null,
+    fromSquare: Square | null,
+    offsetX: number,
+    offsetY: number,
+    x: number,
+    y: number
+}
+
 export function startGame():
     GameState {
     return {
