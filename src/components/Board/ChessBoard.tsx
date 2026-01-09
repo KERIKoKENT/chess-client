@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Square, Piece, isLightSquare, allSquares, GameState, Move, PieceType, DragState, startGame } from '../../types/chess';
-import { getEnPasaunt, isKingInCheck } from '../../utils/gameLogic'
+import { Square, Piece, isLightSquare, allSquares, GameState, Move, PieceType } from '../../types/chess';
+import { getEnPasaunt, isKingInCheck, oppositeColor } from '../../utils/gameLogic'
 import ChessPiece from '../Piece/ChessPiece';
 import PromotionPopup from '../PromotionPopup/PromotionPopup';
 import EndgamePopup from '../EndgamePopup/EndgamePopup';
@@ -133,7 +133,7 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
                 </div>
 
                 <EndgamePopup 
-                    checkmate={game.checkmate ? game.turn : null}
+                    checkmate={game.checkmate ? oppositeColor(game.turn) : null}
                     stalemate={game.stalemate}
                     onNewGame={onRestartGame}
                 />
