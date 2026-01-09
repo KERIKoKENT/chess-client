@@ -20,7 +20,7 @@ const PromotionPopup: React.FC<PromotionPopupProps> = ({ visible, color, targetS
                 <ChessPiece
                     pieceType={type}
                     pieceColor={color}
-                    size={30 * 0.85}
+                    size={75 * 0.85}
                     isSelected={false}
                     onClick={() => onSelect(type)}
                 />
