@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Square, Piece, isLightSquare, allSquares, GameState, Move, PieceType } from '../../types/chess';
-import { getEnPasaunt } from '../../utils/gameLogic'
+import { getEnPasaunt, isKingInCheck } from '../../utils/gameLogic'
 import ChessPiece from '../Piece/ChessPiece';
 import PromotionPopup from '../PromotionPopup/PromotionPopup';
 import './ChessBoard.css';
@@ -64,6 +64,8 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
                 const isValidMove = move?.to.includes(square);
                 const isCapture = isValidMove && ((piece !== undefined) || (move?.enPasaunt === true));
 
+                const inCheck = piece?.type === 'king' && isKingInCheck(piece.color, game.pieces);
+
                 squares.push(
                     <div
                         key={square}
@@ -94,6 +96,7 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
                                 pieceColor={piece.color}
                                 size={squareSize * 0.85}
                                 isSelected={isSelected}
+                                inCheck={inCheck}
                                 onClick={() => onPieceSelect(piece)}
                             />
                         )}

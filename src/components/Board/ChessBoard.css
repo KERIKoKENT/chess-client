@@ -60,11 +60,6 @@
   background: linear-gradient(135deg, #b58863 0%, #a67b5b 100%);
 }
 
-.chess-square.selected {
-  box-shadow: inset 0 0 0 4px #ffd700;
-  z-index: 2;
-}
-
 .chess-square.valid-move {
   position: relative;
   overflow: hidden;

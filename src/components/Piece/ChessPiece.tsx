@@ -7,10 +7,11 @@ interface ChessPieceProps {
     pieceColor: PieceColor,
     size: number,
     isSelected: boolean,
+    inCheck?: boolean,
     onClick: () => void
 }
 
-const ChessPiece: React.FC<ChessPieceProps> = ({pieceType, pieceColor, size, isSelected, onClick}) => {
+const ChessPiece: React.FC<ChessPieceProps> = ({pieceType, pieceColor, size, isSelected, inCheck, onClick}) => {
     const getPieceSymbol = (type: PieceType, color: string) => {
         const symbols: Record<PieceType, { white: string, black: string}> = {
             king: { white: '♔', black: '♚' },
@@ -39,7 +40,7 @@ const ChessPiece: React.FC<ChessPieceProps> = ({pieceType, pieceColor, size, isS
 
     return (
         <div
-            className={`chess-piece ${pieceColor} ${isSelected ? 'selected' : ''}`}
+            className={`chess-piece ${pieceColor} ${isSelected ? 'selected' : ''} ${isSelected ? 'selected' : ''} ${inCheck ? 'inCheck' : ''}`}
             style={{
                 width: size,
                 height: size,
