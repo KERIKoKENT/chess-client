@@ -1,7 +1,7 @@
 import React, { use, useState } from 'react';
 import ChessBoard from './components/Board/ChessBoard';
 import { Piece, Square, PieceColor, squareToCoords, coordsToSquare, GameState, startGame, PromotionState, PieceType } from './types/chess';
-import { makeMove, getPieceAtSquare, oppositeColor } from './utils/gameLogic';
+import { makeMove, getPieceAtSquare, oppositeColor, getValidMoves } from './utils/gameLogic';
 import './App.css';
 
 const App: React.FC = () => {
@@ -13,7 +13,7 @@ const App: React.FC = () => {
 
   const handlePieceSelect = (piece: Piece) => {
 
-    if(game.promotionMenu.visible) return;
+    if (game.promotionMenu.visible) return;
     if (piece.color !== game.turn) return;
 
     if (selectedPiece?.id === piece.id) {
@@ -67,14 +67,21 @@ const App: React.FC = () => {
         p.id === piece.id ? {...p, type, position: targetSquare, hasMoved: true } : p
     )
 
-    setGame(prev => ({
-      ...prev,
+    const newBoard = {
+      ...game,
       pieces: newPieces,
       promotionMenu: {
         piece: null,
         targetSquare: null,
         visible: false
       }
+    }
+
+    const validMoves = getValidMoves(game.turn, newBoard);
+
+    setGame(prev => ({
+      ...newBoard,
+      validMoves
     }));
 }
 
