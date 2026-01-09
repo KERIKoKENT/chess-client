@@ -1,7 +1,7 @@
 import React, { use, useState } from 'react';
 import ChessBoard from './components/Board/ChessBoard';
 import { Piece, Square, PieceColor, squareToCoords, coordsToSquare, GameState, startGame, PromotionState, PieceType } from './types/chess';
-import { makeMove, getPieceAtSquare, oppositeColor, getValidMoves } from './utils/gameLogic';
+import { makeMove, getPieceAtSquare, oppositeColor, getValidMoves, isKingInCheck } from './utils/gameLogic';
 import './App.css';
 
 const App: React.FC = () => {
@@ -77,10 +77,18 @@ const App: React.FC = () => {
       }
     }
 
-    const validMoves = getValidMoves(game.turn, newBoard);
+    const validMoves = getValidMoves(newBoard.turn, newBoard);
+
+    const hasAnyMoves = Object.values(validMoves).some(m => m.length > 0);
+    const check = isKingInCheck(newBoard.turn, newPieces);
+    const stalemate = !hasAnyMoves && !check;
+    const checkmate = !hasAnyMoves && check;
 
     setGame(prev => ({
       ...newBoard,
+      check: check ? newBoard.turn : null,
+      stalemate,
+      checkmate,
       validMoves
     }));
 }

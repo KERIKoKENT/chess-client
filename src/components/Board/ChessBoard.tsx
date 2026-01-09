@@ -99,15 +99,6 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
                 </button>
             </div>
 
-            <div className="chess-board"
-                style={{
-                    width: boardSize,
-                    height: boardSize
-                }}
-            >
-                {RenderSquares()}
-            </div>
-
             <div className="promotion-menu">
                 {game.promotionMenu.visible && game.promotionMenu.piece && (
                     <PromotionPopup 
@@ -117,6 +108,16 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
                         onSelect={(t) => onPromotionSelect(t)}
                     />
                 )}
+            </div>
+
+            <div className="chess-board"
+                style={{
+                    width: boardSize,
+                    height: boardSize
+                }}
+            >
+                
+                {RenderSquares()}
             </div>
         </div>
     );

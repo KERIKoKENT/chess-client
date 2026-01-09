@@ -1,6 +1,7 @@
 import React from 'react';
 import { PieceType, PieceColor, Square } from '../../types/chess';
 import ChessPiece from '../Piece/ChessPiece';
+import './PromotionPopup.css';
 
 interface PromotionPopupProps {
     visible: boolean,
@@ -20,7 +21,7 @@ const PromotionPopup: React.FC<PromotionPopupProps> = ({ visible, color, targetS
                 <ChessPiece
                     pieceType={type}
                     pieceColor={color}
-                    size={75 * 0.85}
+                    size={65}
                     isSelected={false}
                     onClick={() => onSelect(type)}
                 />

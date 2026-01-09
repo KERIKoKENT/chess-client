@@ -1,0 +1,26 @@
+.promotion-popup {
+    position: absolute;
+    z-index: 20;
+    display: inline-flex;
+    gap: 10px;
+    border-radius: 20px;
+    background-color: #bdb6ae;
+    padding: 5px;
+}
+
+.promotion-popup .chess-piece {
+    border: 3px solid #000;
+    border-radius: 20px;
+}
+
+.promotion-popup .chess-piece.white {
+    background-color: #9c866b;
+}
+
+.promotion-popup .chess-piece.black {
+    background-color: #ccb190;
+}
+
+.promotion-popup .chess-piece:hover {
+    background-color: #5e574d;
+}
