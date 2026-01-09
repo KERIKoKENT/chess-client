@@ -1,8 +1,11 @@
 .promotion-popup {
     position: absolute;
-    z-index: 20;
-    display: inline-flex;
-    gap: 10px;
+    z-index: 1000;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 1.7%;
     border-radius: 20px;
     background-color: #bdb6ae;
     padding: 5px;
@@ -10,7 +13,7 @@
 
 .promotion-popup .chess-piece {
     border: 3px solid #000;
-    border-radius: 20px;
+    border-radius: 15px;
 }
 
 .promotion-popup .chess-piece.white {

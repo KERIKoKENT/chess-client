@@ -97,7 +97,7 @@ const App: React.FC = () => {
     <div style={{ padding: 20 }}>
 
         <ChessBoard game={game} selectedPiece={selectedPiece} pieceValidMoves={pieceValidMoves} 
-        onPieceSelect={handlePieceSelect} onSquareClick={handleSquareClick} onPromotionSelect={handlePromotion} boardSize={600} />
+        onPieceSelect={handlePieceSelect} onSquareClick={handleSquareClick} onPromotionSelect={handlePromotion} />
 
     </div>
   );
