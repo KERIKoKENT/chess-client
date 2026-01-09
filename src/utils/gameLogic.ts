@@ -80,7 +80,7 @@ export function getPieceValidMoves(piece: Piece, game: GameState): Move[] {
         }
     }
 
-    if(piece.type === 'king' && piece.hasMoved === false) {
+    if(piece.type === 'king' && piece.hasMoved === false && !isKingInCheck(piece.color, game.pieces)) {
         const { x, y } = squareToCoords(piece.position);
         const rightSide = getPieceAtSquare(coordsToSquare(x+3, y), game.pieces);
         const leftSide = getPieceAtSquare(coordsToSquare(x-4, y), game.pieces);
